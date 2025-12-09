@@ -19,18 +19,17 @@ import com.dms.dmsproject.service.DocumentServices;
 	    @Autowired
 	    private DocumentServices documentService;
 
-	    @PostMapping("/upload")
+	   
+	    @PostMapping(value = "/upload", consumes = "multipart/form-data")
 	    public ResponseEntity<UploadResponse> uploadDocument(
 	            @RequestParam("file") MultipartFile file,
 	            @RequestParam("documentType") String documentType
 	    ) {
-
 	        UploadResponse response = documentService.saveDocument(file, documentType);
-
 	        return ResponseEntity.ok(response);
 	    }
 	    
-	    @PostMapping("/edit/{id}")
+	    @PostMapping(value = "/edit/{id}", consumes = "multipart/form-data")
 	    public ResponseEntity<UploadResponse> editDocument(
 	            @PathVariable Integer id,
 	            @RequestParam(value = "file", required = false) MultipartFile file,
