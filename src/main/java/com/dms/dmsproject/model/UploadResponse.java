@@ -18,7 +18,7 @@ public class UploadResponse {
 	    private Integer docId;
 	
 	@Column(name="document_type")
-	    private String docType;
+	    private String documentType;
 	    
 	@Column(name="document_name")
 	    private String docName;
@@ -27,7 +27,7 @@ public class UploadResponse {
 	    private String size;
 	
 	@Column(name="document_upload_at")
-	    private String docUploadType;
+	    private String docUploadDate;
 	
 	@Column(name="file_path")
 	    private String filePath;
@@ -41,11 +41,11 @@ public class UploadResponse {
 	}
 
 	public String getDocType() {
-		return docType;
+		return documentType;
 	}
 
 	public void setDocType(String docType) {
-		this.docType = docType;
+		this.documentType = docType;
 	}
 
 	public String getDocName() {
@@ -64,12 +64,12 @@ public class UploadResponse {
 		this.size = size;
 	}
 
-	public String getDocUploadType() {
-		return docUploadType;
+	public String getDocUploadDateS() {
+		return docUploadDate;
 	}
 
-	public void setDocUploadType(String docUploadType) {
-		this.docUploadType = docUploadType;
+	public void setDocUploadDate(String docUploadDate) {
+		this.docUploadDate = docUploadDate;
 	}
 
 	public String getFilePath() {

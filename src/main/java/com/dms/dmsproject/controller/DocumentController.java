@@ -2,6 +2,7 @@ package com.dms.dmsproject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import com.dms.dmsproject.model.UploadResponse;
 import com.dms.dmsproject.service.DocumentServices;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 	@RequestMapping("/api/documents")
 	public class DocumentController {
 

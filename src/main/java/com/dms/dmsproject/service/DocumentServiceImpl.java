@@ -6,8 +6,11 @@ package com.dms.dmsproject.service;
 	import java.nio.file.Path;
 	import java.nio.file.Paths;
 	import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 	import org.springframework.web.multipart.MultipartFile;
 
@@ -21,8 +24,13 @@ import com.dms.dmsproject.model.UploadResponse;
 
 		    @Autowired
 		    private DocumentDAO documentdao;
+		    
+		    @Value("${file.upload-dir}")
+		    private String UPLOAD_FOLDER;
 
-		    private final String UPLOAD_FOLDER = "C:/uploads/";
+//		    private final String UPLOAD_FOLDER = "C:/uploads/";
+		    
+//		    private final String UPLOAD_FOLDER = "/dmsproject/uploaded-Images-fold"
 
 		    public UploadResponse saveDocument(MultipartFile file, String documentType) {
 
@@ -41,7 +49,9 @@ import com.dms.dmsproject.model.UploadResponse;
 		            document.setDocName(file.getOriginalFilename());
 		            document.setDocType(documentType);
 		            document.setSize(file.getSize() + " bytes");
-		            document.setDocUploadType("File Upload");
+		            document.setDocUploadDate(LocalDate.now().toString());
+		            //document.setUploadDate(LocalDate.now().toString());
+
 		            document.setFilePath(filePath);
 
 		            return documentdao.save(document);
