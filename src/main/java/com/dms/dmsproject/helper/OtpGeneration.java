@@ -1,12 +1,14 @@
 package com.dms.dmsproject.helper;
 
+
 import java.security.SecureRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.dms.dmsproject.dao.OtpDao;
-import com.dms.dmsproject.model.DocumentUser;
+
+import com.dms.dmsproject.model.UserRegistration;
 
 @Component
 public class OtpGeneration {
@@ -28,10 +30,10 @@ public class OtpGeneration {
 		public String generateAndSaveOtp(String userEmailId) {
 			String userOtp=generateOtp(6);
 		 
-		DocumentUser documentUser=otpDao.findByUserEmailId(userEmailId);
-		documentUser.setUserOtp(userOtp);
+			UserRegistration userReg=otpDao.findByUserEmailId(userEmailId);
+			userReg.setUserOtp(userOtp);
 		
-		otpDao.save(documentUser);
+		otpDao.save(userReg);
 		return userOtp;
 		
 		
@@ -41,3 +43,4 @@ public class OtpGeneration {
 		
 		
 		
+
