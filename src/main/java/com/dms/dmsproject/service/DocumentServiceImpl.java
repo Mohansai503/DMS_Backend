@@ -1,100 +1,124 @@
 package com.dms.dmsproject.service;
 
-
-	import java.io.File;
-	import java.nio.file.Files;
-	import java.nio.file.Path;
-	import java.nio.file.Paths;
-	import java.nio.file.StandardCopyOption;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
+import jakarta.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-	import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dms.dmsproject.dao.DocumentDAO;
 import com.dms.dmsproject.model.UploadResponse;
 
-	@Service
-	public class DocumentServiceImpl implements DocumentServices{
+@Service
+public class DocumentServiceImpl implements DocumentServices {
 
-	
+    private static final Logger logger = LoggerFactory.getLogger(DocumentServiceImpl.class);
 
-		    @Autowired
-		    private DocumentDAO documentdao;
-		    
-		    @Value("${file.upload-dir}")
-		    private String UPLOAD_FOLDER;
+    @Autowired
+    private DocumentDAO documentdao;
 
-//		    private final String UPLOAD_FOLDER = "C:/uploads/";
-		    
-//		    private final String UPLOAD_FOLDER = "/dmsproject/uploaded-Images-fold"
+    // prefer configured value; empty means "not set"
+    @Value("${file.upload-dir:}")
+    private String UPLOAD_FOLDER;
 
-		    public UploadResponse saveDocument(MultipartFile file, String documentType) {
+    private Path uploadPath;
 
-		        try {
-		            // create upload folder if not exists
-		            File directory = new File(UPLOAD_FOLDER);
-		            if (!directory.exists()) {
-		                directory.mkdirs();
-		            }
+    @PostConstruct
+    public void init() {
+        try {
+            // If no property provided, create/use a folder named "dms-uploads" inside project working dir
+            if (UPLOAD_FOLDER == null || UPLOAD_FOLDER.isBlank()) {
+                String userDir = System.getProperty("user.dir"); // project's working directory
+                UPLOAD_FOLDER = Paths.get(userDir, "dms-uploads").toString();
+            }
+            uploadPath = Paths.get(UPLOAD_FOLDER).toAbsolutePath().normalize();
 
-		            String filePath = UPLOAD_FOLDER + file.getOriginalFilename();
-		            file.transferTo(new File(filePath));
+            // create directories on startup so permissions problem appears early
+            Files.createDirectories(uploadPath);
 
-		            UploadResponse document = new UploadResponse();
+            logger.info("Upload folder resolved to: {}", uploadPath.toString());
+        } catch (IOException e) {
+            logger.error("Failed to create upload folder '{}'", UPLOAD_FOLDER, e);
+            throw new RuntimeException("Failed to initialize upload folder", e);
+        }
+    }
 
-		            document.setDocName(file.getOriginalFilename());
-		            document.setDocType(documentType);
-		            document.setSize(file.getSize() + " bytes");
-		            document.setDocUploadDate(LocalDate.now().toString());
-		            //document.setUploadDate(LocalDate.now().toString());
+    @Override
+    public UploadResponse saveDocument(MultipartFile file, String documentType) {
+        try {
+            if (file == null || file.isEmpty()) {
+                throw new RuntimeException("No file provided");
+            }
 
-		            document.setFilePath(filePath);
+            // ensure directories exist (again, safe)
+            Files.createDirectories(uploadPath);
 
-		            return documentdao.save(document);
+            // sanitize filename (avoid path traversal)
+            String originalFileName = Path.of(file.getOriginalFilename()).getFileName().toString();
+            Path target = uploadPath.resolve(originalFileName);
 
-		        } catch (Exception e) {
-		            throw new RuntimeException("File upload failed", e);
-		        }
-		    }
-		
+            // copy file stream -> target (replace if exists)
+            Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
 
-	    @Override
-	    public UploadResponse updateDocument(Integer id, MultipartFile file, String documentType) {
+            UploadResponse document = new UploadResponse();
+            document.setDocName(originalFileName);
+            document.setDocType(documentType);
+            document.setSize(file.getSize() + " bytes");
+            document.setDocUploadDate(LocalDate.now().toString());
+            document.setFilePath(target.toString());
 
-	        UploadResponse existing = documentdao.findById(id)
-	                .orElseThrow(() -> new RuntimeException("Document not found with id: " + id));
+            return documentdao.save(document);
 
-	        try {
-	            // if new file coming - replace it
-	            if (file != null && !file.isEmpty()) {
+        } catch (IOException e) {
+            logger.error("File save failed", e);
+            throw new RuntimeException("File upload failed: " + e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Unexpected error during upload", e);
+            throw new RuntimeException("File upload failed: " + e.getMessage(), e);
+        }
+    }
 
-	                File directory = new File(UPLOAD_FOLDER);
-	                if (!directory.exists()) directory.mkdirs();
+    @Override
+    public UploadResponse updateDocument(Integer id, MultipartFile file, String documentType) {
 
-	                String filePath = UPLOAD_FOLDER + file.getOriginalFilename();
-	                file.transferTo(new File(filePath));
+        UploadResponse existing = documentdao.findById(id)
+                .orElseThrow(() -> new RuntimeException("Document not found with id: " + id));
 
-	                existing.setDocName(file.getOriginalFilename());
-	                existing.setSize(file.getSize()+" bytes");
-	                existing.setFilePath(filePath);
-	            }
+        try {
+            // if new file coming - replace it
+            if (file != null && !file.isEmpty()) {
+                Files.createDirectories(uploadPath);
 
-	            // change documentType if coming
-	            if (documentType != null) {
-	                existing.setDocType(documentType);
-	            }
+                String originalFileName = Path.of(file.getOriginalFilename()).getFileName().toString();
+                Path target = uploadPath.resolve(originalFileName);
 
-	            return documentdao.save(existing);
+                Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
 
-	        } catch (Exception e) {
-	            throw new RuntimeException("Document update failed", e);
-	        }
-	    }
-	}
+                existing.setDocName(originalFileName);
+                existing.setSize(file.getSize() + " bytes");
+                existing.setFilePath(target.toString());
+            }
 
+            // change documentType if provided
+            if (documentType != null) {
+                existing.setDocType(documentType);
+            }
 
+            return documentdao.save(existing);
 
+        } catch (IOException e) {
+            logger.error("File update failed", e);
+            throw new RuntimeException("Document update failed: " + e.getMessage(), e);
+        }
+    }
+}
