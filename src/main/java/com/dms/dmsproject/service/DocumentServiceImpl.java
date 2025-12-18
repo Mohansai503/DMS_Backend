@@ -1,44 +1,112 @@
-
 package com.dms.dmsproject.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.dms.dmsproject.dao.DocumentDao;
-import com.dms.dmsproject.model.Document;
+import com.dms.dmsproject.dao.DocumentDAO;
+import com.dms.dmsproject.model.UploadResponse;
+import com.dms.dmsproject.model.UserRegistration;
 
-	@Service
-	public class DocumentServiceImpl implements DocumentServices {
-		
-		@Autowired
-		DocumentDao documentDao;
+@Service
+public class DocumentServiceImpl implements DocumentServices {
 
-		@Transactional
-		public void deleteDm(int documentId) {
-			//Load the document from the database
-			//It looks for a Document by its ID.
-            //If the document doesn’t exist, it throws a RuntimeException.
-			Document doc = documentDao.findById(documentId)
-	                .orElseThrow(() -> new RuntimeException("Document not found"));
-			// Delete file from the file system
-			File file = new File(doc.getFilePath());
-			if (file.exists()) {
-	            if (!file.delete()) {
-	                throw new RuntimeException("Failed to delete file: " + doc.getFilePath());
-	            }
-	        }
-			documentDao.delete(doc);
-			
-		}
+    @Autowired
+    private DocumentDAO documentdao;
+    
+    @Value("${file.upload-dir}")
+    private String UPLOAD_FOLDER;
 
-		@Transactional(readOnly = true)
-		public List<Document> list(int userId) {
-		return documentDao.findByUserId(userId);
-		}
+      public UploadResponse saveDocument(MultipartFile file, String documentType,UserRegistration documentUser) {
+
+        try {
+            // create upload folder if not exists
+            File directory = new File(UPLOAD_FOLDER);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            String filePath = UPLOAD_FOLDER + file.getOriginalFilename();
+            file.transferTo(new File(filePath));
+
+            UploadResponse document = new UploadResponse();
+
+            document.setDocName(file.getOriginalFilename());
+            document.setDocumentType(documentType);
+            document.setDocSize(file.getSize() + " bytes");
+            document.setDocUploadDate(LocalDate.now().toString());
+            document.setDocumentUser(documentUser);
+            //document.setUploadDate(LocalDate.now().toString());
+
+            document.setFilePath(filePath);
+
+            return documentdao.save(document);
+
+        } catch (Exception e) {
+            throw new RuntimeException("File upload failed", e);
+        }
+    }
 
 
-	}
+
+
+@Override
+public UploadResponse updateDocument(Integer id, MultipartFile file, String documentType) {
+
+    UploadResponse existing = documentdao.findById(id)
+            .orElseThrow(() -> new RuntimeException("Document not found with id: " + id));
+
+    try {
+        // if new file coming - replace it
+        if (file != null && !file.isEmpty()) {
+
+            File directory = new File(UPLOAD_FOLDER);
+            if (!directory.exists()) directory.mkdirs();
+
+            String filePath = UPLOAD_FOLDER + file.getOriginalFilename();
+            file.transferTo(new File(filePath));
+
+            existing.setDocName(file.getOriginalFilename());
+            existing.setDocSize(file.getSize()+" bytes");
+            existing.setFilePath(filePath);
+        }
+
+        // change documentType if coming
+        if (documentType != null) {
+            existing.setDocumentType(documentType);
+        }
+
+        return documentdao.save(existing);
+
+    } catch (Exception e) {
+        throw new RuntimeException("Document update failed", e);
+    }
+}
+
+/*@Override
+public List<UploadResponse> searchDocuments(String keyword) {
+    return documentdao.searchDocuments(keyword);
+}*/
+
+    @Transactional
+    public void deleteDm(int docId) {
+        UploadResponse doc = documentdao.findById(docId)
+                .orElseThrow(() -> new RuntimeException("Document not found"));
+
+        File file = new File(doc.getFilePath());
+        if (file.exists()) file.delete();
+
+        documentdao.delete(doc);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UploadResponse> list(int userId) {
+        return documentdao.findByDocumentUser_Userid(userId);
+    }
+}
