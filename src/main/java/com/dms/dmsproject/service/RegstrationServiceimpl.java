@@ -40,4 +40,8 @@ public class RegstrationServiceimpl implements RegistrationService{
 		
 	}
 
+	   public boolean existsByEmail(String userEmailId) {
+		   
+		return regstrationdao.existsByUserEmailId(userEmailId);
+	   }
 }
