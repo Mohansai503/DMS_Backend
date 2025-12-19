@@ -31,6 +31,10 @@ public class OtpGeneration {
 			String userOtp=generateOtp(6);
 		 
 			UserRegistration userReg=otpDao.findByUserEmailId(userEmailId);
+			if(userReg==null) {
+				return null;
+				
+			}
 			userReg.setUserOtp(userOtp);
 		
 		otpDao.save(userReg);
