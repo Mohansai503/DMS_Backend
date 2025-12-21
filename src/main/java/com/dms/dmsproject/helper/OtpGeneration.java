@@ -32,7 +32,9 @@ public class OtpGeneration {
 		 
 			UserRegistration userReg=otpDao.findByUserEmailId(userEmailId);
 			if(userReg==null) {
-				return null;
+				userReg=new UserRegistration();
+				userReg.setUserEmailId(userEmailId);
+				
 				
 			}
 			userReg.setUserOtp(userOtp);
