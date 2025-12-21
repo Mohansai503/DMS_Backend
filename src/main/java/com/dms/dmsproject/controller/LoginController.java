@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dms.dmsproject.model.UserRegistration;
-import com.dms.dmsproject.service.EmailServices;
+
 import com.dms.dmsproject.service.LoginServices;
 
 @CrossOrigin(origins = "*")
@@ -24,8 +24,7 @@ public class LoginController {
 	@Autowired
 	public LoginServices loginservices;
 	
-	@Autowired
-	public EmailServices emailservices;
+	
 	
 	@PostMapping("/login")
 	public ResponseEntity<?> loginSave(@RequestBody UserRegistration usreg) {
