@@ -27,15 +27,15 @@ public class OtpGeneration {
 			return userOtp.toString();
 		}
 		
-		public String generateAndSaveOtp(String userEmailId) {
+		public String generateAndSaveOtp(String userEmailId,String userName ) {
 			String userOtp=generateOtp(6);
 		 
 			UserRegistration userReg=otpDao.findByUserEmailId(userEmailId);
 			if(userReg==null) {
 				userReg=new UserRegistration();
 				userReg.setUserEmailId(userEmailId);
-				
-				
+				userReg.setUserName(userName);
+					
 			}
 			userReg.setUserOtp(userOtp);
 		
