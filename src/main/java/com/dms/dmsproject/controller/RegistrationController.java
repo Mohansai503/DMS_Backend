@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dms.dmsproject.model.UserRegistration;
-import com.dms.dmsproject.service.EmailServices;
+//import com.dms.dmsproject.service.EmailServices;
 import com.dms.dmsproject.service.RegistrationService;
 
 
@@ -26,8 +26,7 @@ public class RegistrationController {
 	@Autowired
 	private RegistrationService registrationservice;
 	
-//	@Autowired
-//	public EmailServices emailservices;
+
 	
 	@PostMapping("/regsave")
 	public ResponseEntity<?> saveUser(@RequestBody UserRegistration user) {
