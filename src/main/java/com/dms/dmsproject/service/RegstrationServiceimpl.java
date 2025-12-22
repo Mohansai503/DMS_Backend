@@ -1,15 +1,12 @@
 package com.dms.dmsproject.service;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.dms.dmsproject.dao.RegistrationDao;
 import com.dms.dmsproject.model.UserRegistration;
 
 @Service
-
 public class RegstrationServiceimpl implements RegistrationService{
 	
 	@Autowired
@@ -41,7 +38,7 @@ public class RegstrationServiceimpl implements RegistrationService{
 	}
 
 	   public boolean existsByEmail(String userEmailId) {
-		   
-		return regstrationdao.existsByUserEmailId(userEmailId);
+		   return regstrationdao.existsByUserEmailId(userEmailId);
+		 
 	   }
 }

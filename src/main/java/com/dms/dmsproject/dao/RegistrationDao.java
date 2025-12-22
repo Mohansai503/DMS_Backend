@@ -7,11 +7,10 @@ import com.dms.dmsproject.model.UserRegistration;
 
 @Repository
 public interface RegistrationDao extends JpaRepository<UserRegistration,Integer>{
-	// findbyEmailid
 	
 
-	//void existsByEmail(String userEmailId);
-	
 	boolean existsByUserEmailId(String userEmailId);
+
+	
 
 }
