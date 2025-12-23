@@ -19,6 +19,6 @@ public interface RegistrationService {
 
 	public boolean existsByEmail(String userEmailId);
 
-	//public UserRegistration findByEmail(String userEmailId);
+	
 
 }
