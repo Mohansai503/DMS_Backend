@@ -1,7 +1,10 @@
 package com.dms.dmsproject.dao;
+import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.dms.dmsproject.model.UploadResponse;
 
@@ -12,6 +15,19 @@ public interface DocumentDAO extends JpaRepository<UploadResponse, Integer> {
 	    List<UploadResponse> searchDocuments(String keyword);
 
     // ✅ CORRECT QUERY METHOD
-    List<UploadResponse> findByDocumentUser_Userid(int userId);
+    //List<UploadResponse> findByDocumentUser_Userid(int userId);
+	 
+	 @Query("SELECT d FROM UploadResponse d WHERE d.documentUser.userId = :userId")
+	 List<UploadResponse> findAllByUserId(int userId);
+	 
+	 @Query("SELECT d FROM UploadResponse d WHERE d.documentUser.userId = :userId AND d.docUploadDate >= :date")
+	    List<UploadResponse> findRecentDocuments(
+	            @Param("userId") int userId,
+	            @Param("date") LocalDateTime date);
 
+	 @Query("SELECT d FROM UploadResponse d WHERE d.documentUser.userId = :userId AND d.deleted = 1")
+	 List<UploadResponse> findDeletedDocuments(@Param("userId") int userId);
+
+   
+	 
 }

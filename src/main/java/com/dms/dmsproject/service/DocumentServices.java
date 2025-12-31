@@ -13,9 +13,13 @@ import com.dms.dmsproject.model.UserRegistration;
 
 		UploadResponse updateDocument(Integer id, MultipartFile file, String documentType);
 		
-		void deleteDm(int docId);
+		String deleteDm(int docId);
 		
-		List<UploadResponse> list(int userId);
+		String restoreDocument(int docId);
+		
+		//List<UploadResponse> list(int userId);
+
+		List<UploadResponse> getDocumentsByType(int userId, String type);
 		
 		
 	
