@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.dms.dmsproject.dao.OtpDao;
-
 import com.dms.dmsproject.model.UserRegistration;
 
 @Component
@@ -27,23 +26,42 @@ public class OtpGeneration {
 			return userOtp.toString();
 		}
 		
-		public String generateAndSaveOtp(String userEmailId,String userName ) {
-			String userOtp=generateOtp(6);
-		 
-			UserRegistration userReg=otpDao.findByUserEmailId(userEmailId);
-			if(userReg==null) {
-				userReg=new UserRegistration();
-				userReg.setUserEmailId(userEmailId);
-				userReg.setUserName(userName);
-					
-			}
-			userReg.setUserOtp(userOtp);
-		
-		otpDao.save(userReg);
-		return userOtp;
-		
-		
-		}
+		// Registration check
+	    public boolean isUserRegistered(String email) {
+	        return otpDao.findByUserEmailId(email) != null;
+	    }
+
+	    // Login check
+	    public boolean isUserNotRegistered(String email) {
+	        return otpDao.findByUserEmailId(email) == null;
+	    }
+	    
+	  //Overload For Registration
+	    public String generateAndSaveOtp(String email, String userName) {
+	        String otp = generateOtp(6);
+
+	        UserRegistration user = new UserRegistration();
+	        user.setUserEmailId(email);
+	        user.setUserName(userName);
+	        user.setUserOtp(otp);
+
+	        otpDao.save(user);
+	        return otp;
+	    }
+		//Overload For Login
+	    public String generateAndSaveOtp(String email) {
+	        UserRegistration user = otpDao.findByUserEmailId(email);
+
+	        if (user == null) {
+	            throw new RuntimeException("User not found");
+	        }
+
+	        String otp = generateOtp(6);
+	        user.setUserOtp(otp);
+	        otpDao.save(user);
+
+	        return otp;
+	    }
 }
 		
 		

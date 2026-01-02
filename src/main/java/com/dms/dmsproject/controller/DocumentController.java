@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dms.dmsproject.dto.DocumentDto;
 import com.dms.dmsproject.model.UploadResponse;
 import com.dms.dmsproject.model.UserRegistration;
 import com.dms.dmsproject.service.DocumentServices;
@@ -55,13 +57,31 @@ import com.dms.dmsproject.service.DocumentServices;
 		public ResponseEntity<String> deleteDocument(@PathVariable int docId) {
 	    	UploadResponse dm=new UploadResponse();
 			dm.setDocId(docId);
-			documentService.deleteDm(docId);
-			return ResponseEntity.ok("Document deleted successfully with ID:" + docId);		
+			String message=documentService.deleteDm(docId);
+			return ResponseEntity.ok(message);		
 		}
 		
-	    @GetMapping("/{userId}")
-	    public List<UploadResponse> getAllDocumentsByUserId(@PathVariable int userId) {
-	        return documentService.list(userId);
+	    
+	    @PostMapping("/list/{userId}")
+	    public ResponseEntity<List<UploadResponse>> getDocumentsByType(
+	            @PathVariable int userId,
+	            @RequestBody DocumentDto docdto) {
+
+	        List<UploadResponse> message= documentService.getDocumentsByType(userId, docdto.getType());
+	        return ResponseEntity.ok(message);
 	    }
+	    
+	    
+	    @PostMapping("/restore/{docId}")
+		public ResponseEntity<String> restoreDocument(@PathVariable int docId) {
+		    documentService.restoreDocument(docId);
+		    return ResponseEntity.ok("Document Restored Successfully" + docId);
+		}
+	    
+	    
+	    //@GetMapping("/{userId}")
+	    //public List<UploadResponse> getAllDocumentsByUserId(@PathVariable int userId) {
+	        //return documentService.list(userId);
+	    //}
 
 }

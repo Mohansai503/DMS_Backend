@@ -1,5 +1,7 @@
 package com.dms.dmsproject.model;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -24,7 +26,7 @@ public class UploadResponse {
     private String docSize;
 
     @Column(name = "document_upload_at")
-    private String docUploadDate;
+    private LocalDateTime docUploadDate;
 
     @Column(name = "file_path")
     private String filePath;
@@ -35,16 +37,25 @@ public class UploadResponse {
     @JsonBackReference
     private UserRegistration documentUser;
     
-   
-    public String getDocSize() {
+    @Column(name = "document_delete", columnDefinition = "boolean default 0")
+    private int deleted;
+    
+
+	public int getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(int deleted) {
+		this.deleted = deleted;
+	}
+
+	public String getDocSize() {
 		return docSize;
 	}
 
 	public void setDocSize(String docSize) {
 		this.docSize = docSize;
 	}
-
-
    
     public Integer getDocId() {
         return docId;
@@ -68,19 +79,19 @@ public class UploadResponse {
 
     public void setDocName(String docName) {
         this.docName = docName;
-    }
+    } 
 
-    
+	
 
-    public String getDocUploadDate() {
-        return docUploadDate;
-    }
+	public LocalDateTime getDocUploadDate() {
+		return docUploadDate;
+	}
 
-    public void setDocUploadDate(String docUploadDate) {
-        this.docUploadDate = docUploadDate;
-    }
+	public void setDocUploadDate(LocalDateTime docUploadDate) {
+		this.docUploadDate = docUploadDate;
+	}
 
-    public UserRegistration getDocumentUser() {
+	public UserRegistration getDocumentUser() {
 		return documentUser;
 	}
 
