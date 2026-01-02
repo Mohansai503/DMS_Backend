@@ -14,8 +14,8 @@ public interface DocumentDAO extends JpaRepository<UploadResponse, Integer> {
 	           "LOWER(d.documentType) LIKE LOWER(CONCAT('%', :keyword, '%'))")
 	    List<UploadResponse> searchDocuments(String keyword);
 
-    // ✅ CORRECT QUERY METHOD
-    //List<UploadResponse> findByDocumentUser_Userid(int userId);
+//     ✅ CORRECT QUERY METHOD
+//    List<UploadResponse> findByDocumentUser_Userid(int userId);
 	 
 	 @Query("SELECT d FROM UploadResponse d WHERE d.documentUser.userId = :userId")
 	 List<UploadResponse> findAllByUserId(int userId);

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dms.dmsproject.dao.DocumentDAO;
+import com.dms.dmsproject.dao.RegistrationDao;
 import com.dms.dmsproject.model.UploadResponse;
 import com.dms.dmsproject.model.UserRegistration;
 
@@ -21,10 +22,15 @@ public class DocumentServiceImpl implements DocumentServices {
     @Autowired
     private DocumentDAO documentdao;
     
+    @Autowired
+    private RegistrationDao registrationDao;
+    
     @Value("${file.upload-dir}")
     private String UPLOAD_FOLDER;
     
-    public UploadResponse saveDocument(MultipartFile file, String documentType,UserRegistration documentUser) {
+    public UploadResponse saveDocument(MultipartFile file, String documentType,Integer userId) {
+    	
+    	UserRegistration user = registrationDao.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found..."));
 
         try {
             // create upload folder if not exists
@@ -43,7 +49,7 @@ public class DocumentServiceImpl implements DocumentServices {
             document.setDocSize(file.getSize() + " bytes");
             document.setDocUploadDate(LocalDateTime.now());
 
-            document.setDocumentUser(documentUser);
+            document.setDocumentUser(user);
             //document.setUploadDate(LocalDate.now().toString());
 
             document.setFilePath(filePath);
