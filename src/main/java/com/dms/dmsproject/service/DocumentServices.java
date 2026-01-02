@@ -16,6 +16,7 @@ import com.dms.dmsproject.model.UserRegistration;
 		String deleteDm(int docId);
 		
 		String restoreDocument(int docId);
+		public List<UploadResponse> searchDocuments(String docName,String docType, String uploadedDate);
 		
 		//List<UploadResponse> list(int userId);
 
