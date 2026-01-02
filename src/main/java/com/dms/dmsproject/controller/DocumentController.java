@@ -78,6 +78,25 @@ import com.dms.dmsproject.service.DocumentServices;
 		    return ResponseEntity.ok("Document Restored Successfully" + docId);
 		}
 	    
+	    @GetMapping("/search")
+	    public ResponseEntity<List<UploadResponse>> searchDocuments(
+	            @RequestParam(required = false) String docName,
+	            @RequestParam(required = false) String docType,
+	            @RequestParam(required = false) String uploadedDate   // yyyy-MM-dd
+	    ) {
+	        List<UploadResponse> documents =
+	                documentService.searchDocuments(docName, docType, uploadedDate);
+
+	        return ResponseEntity.ok(documents);
+	    }
+
+	    
+	  //  @GetMapping("/search")
+	  //  public ResponseEntity<List<UploadResponse>> searchDocuments(@RequestParam String keyword) {
+	     //   List<UploadResponse> documents = documentService.searchDocuments(keyword);
+	      //  return ResponseEntity.ok(documents);
+	   // }
+	    
 	    
 	    //@GetMapping("/{userId}")
 	    //public List<UploadResponse> getAllDocumentsByUserId(@PathVariable int userId) {

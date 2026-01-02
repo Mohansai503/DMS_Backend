@@ -157,4 +157,24 @@ public List<UploadResponse> searchDocuments(String keyword) {
 		throw new IllegalArgumentException("Invalid type: " + type);
 	
 	}
+    
+    @Transactional(readOnly = true)
+    public List<UploadResponse> searchDocuments(String docName,String docType, String uploadedDate) {
+        LocalDateTime start = null;
+        LocalDateTime end = null;
+
+        if (uploadedDate != null && !uploadedDate.isEmpty()) {
+            LocalDate date = LocalDate.parse(uploadedDate); // yyyy-MM-dd
+            start = date.atStartOfDay();        // 00:00:00
+            end = date.atTime(23, 59, 59);      // 23:59:59
+        }
+
+        return documentdao.searchDocuments(docName,docType,start,end);
+    }
+
+    
+   // @Transactional(readOnly = true)
+    //public List<UploadResponse> searchDocuments(String keyword) {
+        //return documentdao.searchDocuments(keyword);
+    //}
 }
