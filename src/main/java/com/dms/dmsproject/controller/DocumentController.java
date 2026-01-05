@@ -1,4 +1,5 @@
 
+
 package com.dms.dmsproject.controller;
 
 import java.util.List;
@@ -32,11 +33,11 @@ import com.dms.dmsproject.service.DocumentServices;
 	        public ResponseEntity<UploadResponse> uploadDocument(
 	                @RequestParam("file") MultipartFile file,
 	                @RequestParam("documentType") String documentType,
-	                @RequestParam("documentUser") UserRegistration documentUser
+	                @RequestParam("userId") Integer userId
 	        ) {
 	        	
 	        	// ✅ THIS IS THE EXACT PLACE
-	            UploadResponse response =documentService.saveDocument(file, documentType, documentUser);
+	            UploadResponse response =documentService.saveDocument(file, documentType, userId);
 	            return ResponseEntity.ok(response );
 	        }
 	    
@@ -102,5 +103,16 @@ import com.dms.dmsproject.service.DocumentServices;
 	    //public List<UploadResponse> getAllDocumentsByUserId(@PathVariable int userId) {
 	        //return documentService.list(userId);
 	    //}
+	    
+	    @GetMapping("/trash/{userId}")
+	    public ResponseEntity<List<UploadResponse>> getTrashDocuments(
+	            @PathVariable int userId) {
+
+	        List<UploadResponse> trashDocs =
+	                documentService.getDocumentsByType(userId, "trash");
+
+	        return ResponseEntity.ok(trashDocs);
+	    }
+
 
 }

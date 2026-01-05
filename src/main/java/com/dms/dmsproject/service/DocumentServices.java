@@ -9,7 +9,7 @@ import com.dms.dmsproject.model.UserRegistration;
 
 	public interface DocumentServices {
 
-		UploadResponse saveDocument(MultipartFile file,String documentType,UserRegistration documentUser);
+		UploadResponse saveDocument(MultipartFile file,String documentType,Integer userId);
 
 		UploadResponse updateDocument(Integer id, MultipartFile file, String documentType);
 		
