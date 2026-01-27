@@ -66,5 +66,8 @@ public class RegistrationController {
 		return userid;
 		
 	}
+	
+	
+
 
 }

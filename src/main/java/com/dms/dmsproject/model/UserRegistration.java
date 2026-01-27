@@ -14,7 +14,7 @@ public class UserRegistration {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="document_user_id")
-	int userid;
+	int userId;
 	@Column(name="document_user_name")
 	String userName;
 	@Column(name="document_user_emailid")
@@ -28,11 +28,12 @@ public class UserRegistration {
 	public void setUserOtp(String userOtp) {
 		this.userOtp = userOtp;
 	}
-	public int getUserid() {
-		return userid;
+	
+	public int getUserId() {
+		return userId;
 	}
-	public void setUserid(int userid) {
-		this.userid = userid;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	public String getUserName() {
 		return userName;
