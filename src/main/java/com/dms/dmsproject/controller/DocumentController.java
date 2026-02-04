@@ -102,5 +102,6 @@ import com.dms.dmsproject.service.DocumentServices;
 	    //public List<UploadResponse> getAllDocumentsByUserId(@PathVariable int userId) {
 	        //return documentService.list(userId);
 	    //}
-
+ 
+	    
 }
