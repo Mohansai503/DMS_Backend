@@ -20,7 +20,7 @@ import com.dms.dmsproject.dto.DocumentDto;
 import com.dms.dmsproject.model.UploadResponse;
 import com.dms.dmsproject.model.UserRegistration;
 import com.dms.dmsproject.service.DocumentServices;
-
+ 
 	    @RestController
 	    @CrossOrigin(origins = "http://localhost:5173")
 	    @RequestMapping("/api/documents")
