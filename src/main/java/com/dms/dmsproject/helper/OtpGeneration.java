@@ -1,3 +1,4 @@
+/*
 package com.dms.dmsproject.helper;
 
 
@@ -48,6 +49,7 @@ public class OtpGeneration {
 	        otpDao.save(user);
 	        return otp;
 	    }
+		
 		//Overload For Login
 	    public String generateAndSaveOtp(String email) {
 	        UserRegistration user = otpDao.findByUserEmailId(email);
@@ -63,6 +65,7 @@ public class OtpGeneration {
 	        return otp;
 	    }
 }
+*/
 		
 		
 		

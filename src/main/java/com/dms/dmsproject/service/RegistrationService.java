@@ -8,15 +8,14 @@ import com.dms.dmsproject.model.UserRegistration;
 
 @Service
 public interface RegistrationService {
-	
-	public UserRegistration save(UserRegistration user);
 
-	public List<UserRegistration> list();
+    public UserRegistration save(UserRegistration user);
+    public List<UserRegistration> list();
+    public void delete(int userid);
+    public void edit(UserRegistration ureg);
+    public boolean existsByEmail(String userEmailId);
 
-	public void delete(int userid);
-
-	public void edit(UserRegistration ureg);
-
-	public boolean existsByEmail(String userEmailId);
+    void markUserAsVerified(String email);  
 
 }
+

@@ -19,18 +19,25 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+            // Disable CSRF (because we are using REST APIs)
             .csrf(csrf -> csrf.disable())
+
+            // No session (JWT is stateless)
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+
+            // Authorization rules
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                        "/loginpage/login",
-                        "/registration/**",
-                        "/otpapi/**"
+                        "/loginpage/**",      // login APIs
+                        "/registration/**"   // registration APIs
+                        //"/otpapi/**"          // otp APIs
                 ).permitAll()
                 .anyRequest().authenticated()
             )
+
+            // Add JWT filter before UsernamePasswordAuthenticationFilter
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

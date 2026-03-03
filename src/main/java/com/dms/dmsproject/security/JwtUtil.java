@@ -16,7 +16,7 @@ public class JwtUtil {
     // ✅ Strong secure key (auto generated)
     private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    private final long EXPIRATION_TIME = 1000 * 60 * 30; // 30 minutes
+    private final long EXPIRATION_TIME = 1000 * 60 * 60; // 60 minutes
 
     public String generateToken(String email) {
 

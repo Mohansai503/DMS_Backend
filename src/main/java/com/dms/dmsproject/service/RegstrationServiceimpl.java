@@ -21,6 +21,19 @@ public class RegstrationServiceimpl implements RegistrationService{
 		return userregistration;
 		
 	}
+	
+	@Override
+	public void markUserAsVerified(String email) {
+
+	    UserRegistration user =
+	            regstrationdao.findByUserEmailId(email);
+
+	    if (user != null) {
+	        user.setVerified(true);
+	        user.setUserOtp(null);
+	        regstrationdao.save(user);
+	    }
+	}
 
 	@Override
 	public List<UserRegistration> list() {

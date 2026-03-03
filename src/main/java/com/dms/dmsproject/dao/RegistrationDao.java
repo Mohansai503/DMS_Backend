@@ -6,12 +6,12 @@ import org.springframework.stereotype.Repository;
 import com.dms.dmsproject.model.UserRegistration;
 
 @Repository
-public interface RegistrationDao extends JpaRepository<UserRegistration,Integer>{
-	// findbyEmailid
-	
+public interface RegistrationDao
+        extends JpaRepository<UserRegistration,Integer>{
 
-	//void existsByEmail(String userEmailId);
-	
-	boolean existsByUserEmailId(String userEmailId);
+    boolean existsByUserEmailId(String userEmailId);
 
+    UserRegistration findByUserEmailId(String userEmailId);
 }
+
+

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dms.dmsproject.helper.OtpGeneration;
+//import com.dms.dmsproject.helper.OtpGeneration;
 import com.dms.dmsproject.service.OtpVerificationServiceImpl;
 
 @RestController
@@ -17,12 +17,13 @@ import com.dms.dmsproject.service.OtpVerificationServiceImpl;
 @CrossOrigin(origins = "*")
 public class OtpController {
 	
-	@Autowired
-	private OtpGeneration otpGen;
+	//@Autowired
+	//private OtpGeneration otpGen;
 	
 	@Autowired
 	private OtpVerificationServiceImpl otpVerifyServ;
 	
+	/*
 	//Registration end point
 	@GetMapping("/generate")
 	public ResponseEntity<String> handlingOtpReg(@RequestParam String email, @RequestParam String userName) {
@@ -45,6 +46,8 @@ public class OtpController {
 	        String otp = otpGen.generateAndSaveOtp(email);
 	        return ResponseEntity.ok(otp);
 	    }
+	    
+	    */
 		
 	// Common
 	@PostMapping("/verify")

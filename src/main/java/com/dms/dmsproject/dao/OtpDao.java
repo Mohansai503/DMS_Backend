@@ -10,5 +10,7 @@
 	@Repository
 	public interface OtpDao extends JpaRepository<UserRegistration, Integer> {
 
-		UserRegistration findByUserEmailId(String userEmailId);
+	    UserRegistration findByUserEmailId(String userEmailId);
+
+	    boolean existsByUserEmailId(String userEmailId);
 	}

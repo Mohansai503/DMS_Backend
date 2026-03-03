@@ -1,5 +1,7 @@
 package com.dms.dmsproject.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +23,25 @@ public class UserRegistration {
 	String userEmailId;
 	@Column(name="document_user_otp")
 	String userOtp;
+	
+	@Column(name = "otp_expiry_time")
+	private LocalDateTime otpExpiryTime;
+
+	@Column(name = "is_verified")
+	private Boolean isVerified;
+	
+	public LocalDateTime getOtpExpiryTime() {
+		return otpExpiryTime;
+	}
+	public void setOtpExpiryTime(LocalDateTime otpExpiryTime) {
+		this.otpExpiryTime = otpExpiryTime;
+	}
+	public Boolean isVerified() {
+		return isVerified;
+	}
+	public void setVerified(Boolean isVerified) {
+		this.isVerified = isVerified;
+	}
 	
 	public String getUserOtp() {
 		return userOtp;

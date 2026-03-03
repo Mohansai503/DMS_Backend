@@ -13,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dms.dmsproject.dto.OtpVerifyRequest;
 import com.dms.dmsproject.model.UserRegistration;
+import com.dms.dmsproject.service.OtpService;
+import com.dms.dmsproject.service.OtpVerificationService;
 //import com.dms.dmsproject.service.EmailServices;
 import com.dms.dmsproject.service.RegistrationService;
 
@@ -26,8 +29,14 @@ public class RegistrationController {
 	@Autowired
 	private RegistrationService registrationservice;
 	
-
+	@Autowired
+	private OtpService otpService;
 	
+	@Autowired
+	private OtpVerificationService otpVerificationService;
+	
+
+	/*
 	@PostMapping("/regsave")
 	public ResponseEntity<?> saveUser(@RequestBody UserRegistration user) {
 	
@@ -45,6 +54,46 @@ public class RegistrationController {
 	            .body("Registration done sucessfully Otp sent to your mail" +reg.getUserEmailId());
 		
 
+	}
+	
+	*/
+	
+	@PostMapping("/send-otp")
+	public ResponseEntity<?> sendOtp(@RequestBody UserRegistration user) {
+
+	    try {
+	        String otp = otpService.generateOtpForRegistration(
+	                user.getUserEmailId(),
+	                user.getUserName());
+
+	        return ResponseEntity.ok("OTP sent to your email");
+
+	    } catch (RuntimeException e) {
+
+	        return ResponseEntity
+	                .status(HttpStatus.BAD_REQUEST)
+	                .body(e.getMessage());
+	    }
+	}
+
+	@PostMapping("/verify-otp")
+	public ResponseEntity<?> verifyRegistrationOtp(
+	        @RequestBody OtpVerifyRequest request) {
+
+	    boolean isValid =
+	            otpVerificationService.verifyOtp(
+	                    request.getEmail(),
+	                    request.getOtp());
+
+	    if (!isValid) {
+	        return ResponseEntity
+	                .badRequest()
+	                .body("Invalid or Expired OTP");
+	    }
+
+	    registrationservice.markUserAsVerified(request.getEmail());
+
+	    return ResponseEntity.ok("Registration Successful");
 	}
 	
 	@GetMapping("/")

@@ -1,5 +1,7 @@
 package com.dms.dmsproject.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,29 +14,29 @@ public class OtpVerificationServiceImpl implements OtpVerificationService {
 	@Autowired
 	private OtpDao otpDao;
 	
+	@Override
 	public boolean verifyOtp(String email, String enteredOtp) {
-		
-		UserRegistration userReg = otpDao.findByUserEmailId(email);
-		
-//		if(user == null && user.getUserOtp() == null) {
-//			return false;
-//		}
-		
-		if (userReg == null) {
+
+	    UserRegistration user = otpDao.findByUserEmailId(email);
+
+	    if (user == null) {
 	        return false;
 	    }
 
-	    if (userReg.getUserOtp() == null) {
+	    if (user.getUserOtp() == null) {
 	        return false;
 	    }
 
-	    boolean isValid = enteredOtp.equals(userReg.getUserOtp());
-
-	    if (isValid) {
-	        userReg.setUserOtp(null); // invalidate OTP
-	        otpDao.save(userReg);
+	    // Check expiry
+	    if (user.getOtpExpiryTime().isBefore(LocalDateTime.now())) {
+	        return false;
 	    }
-		return isValid;
+
+	    if (!enteredOtp.equals(user.getUserOtp())) {
+	        return false;
+	    }
+
+	    return true;
 	}
 
 }
