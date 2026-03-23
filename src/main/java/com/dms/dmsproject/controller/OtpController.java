@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dms.dmsproject.model.UserRegistration;
 //import com.dms.dmsproject.helper.OtpGeneration;
 import com.dms.dmsproject.service.OtpVerificationServiceImpl;
 
@@ -53,9 +54,9 @@ public class OtpController {
 	@PostMapping("/verify")
 	public ResponseEntity<String> verifyOtp(@RequestParam String email, @RequestParam String otp) {
 
-        boolean isValid = otpVerifyServ.verifyOtp(email, otp);
+        UserRegistration isValid = otpVerifyServ.verifyOtp(email, otp);
 
-        if (!isValid) {
+        if (isValid == null) {
             return ResponseEntity.badRequest().body("Invalid or Expired OTP");
         }
 

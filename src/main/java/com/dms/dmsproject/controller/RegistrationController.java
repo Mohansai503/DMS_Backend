@@ -80,12 +80,12 @@ public class RegistrationController {
 	public ResponseEntity<?> verifyRegistrationOtp(
 	        @RequestBody OtpVerifyRequest request) {
 
-	    boolean isValid =
+	    UserRegistration isValid =
 	            otpVerificationService.verifyOtp(
 	                    request.getEmail(),
 	                    request.getOtp());
 
-	    if (!isValid) {
+	    if (isValid == null) {
 	        return ResponseEntity
 	                .badRequest()
 	                .body("Invalid or Expired OTP");

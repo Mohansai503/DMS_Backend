@@ -1,5 +1,6 @@
 package com.dms.dmsproject.controller;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,58 +21,72 @@ import com.dms.dmsproject.service.OtpVerificationService;
 @RequestMapping("/loginpage")
 public class LoginController {
 
-    @Autowired
-    private LoginServices loginservices;
+	@Autowired
+	private LoginServices loginservices;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-    
-    @Autowired
-    private OtpService otpService;
-    
-    @Autowired
-    private OtpVerificationService otpVerificationService;
+	@Autowired
+	private JwtUtil jwtUtil;
 
-    /*
-    @PostMapping("/login")
-    public ResponseEntity<?> loginSave(@RequestBody UserRegistration usreg) {
+	@Autowired
+	private OtpService otpService;
 
-        UserRegistration existingUser =
-                loginservices.findByEmail(usreg.getUserEmailId());
+	@Autowired
+	private OtpVerificationService otpVerificationService;
 
-        if (existingUser == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Email not registered! Please register first.");
-        }
+	/*
+	 * @PostMapping("/login") public ResponseEntity<?> loginSave(@RequestBody
+	 * UserRegistration usreg) {
+	 * 
+	 * UserRegistration existingUser =
+	 * loginservices.findByEmail(usreg.getUserEmailId());
+	 * 
+	 * if (existingUser == null) { return
+	 * ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	 * .body("Email not registered! Please register first."); }
+	 * 
+	 * String token = jwtUtil.generateToken(existingUser.getUserEmailId());
+	 * 
+	 * Map<String, String> response = new HashMap<>(); response.put("status",
+	 * "success"); response.put("token", token);
+	 * 
+	 * return ResponseEntity.ok(response);
+	 * 
+	 * 
+	 * }
+	 */
 
-        String token = jwtUtil.generateToken(existingUser.getUserEmailId());
+	@PostMapping("/send-otp")
+	public ResponseEntity<?> sendLoginOtp(@RequestBody UserRegistration user) {
 
-        Map<String, String> response = new HashMap<>();
-        response.put("status", "success");
-        response.put("token", token);
+		String message = otpService.generateOtpForLogin(user.getUserEmailId());
 
-        return ResponseEntity.ok(response);
-        
-    
-    }  */
-    
-    @PostMapping("/send-otp")
-    public ResponseEntity<?> sendLoginOtp(
-            @RequestBody UserRegistration user) {
+		return ResponseEntity.ok(message);
+	}
 
-        String message = otpService.generateOtpForLogin(
-                user.getUserEmailId());
-
-        return ResponseEntity.ok(message);
-    }
-    
-    @PostMapping("/verify-otp")
+	@PostMapping("/verify-otp")
     public ResponseEntity<?> verifyLoginOtp(
             @RequestBody OtpVerifyRequest request) {
 
-        boolean isValid = otpVerificationService.verifyOtp(
+    	UserRegistration user = otpVerificationService.verifyOtp(
                 request.getEmail(),
                 request.getOtp());
+    	boolean isValid = true;
+    	   if (user == null) {
+    		   isValid = false;
+   	    }
+   
+   	    if (user.getUserOtp() == null) {
+   	     isValid = false;
+   	    }
+   
+   	    // Check expiry
+   	    if (user.getOtpExpiryTime().isBefore(LocalDateTime.now())) {
+   	     isValid = false;
+   	    }
+   
+   	    if (! request.getOtp().equals(user.getUserOtp())) {
+   	     isValid = false;
+   	    }
 
         if (!isValid) {
             Map<String, String> errorResponse = new HashMap<>();
@@ -87,6 +102,7 @@ public class LoginController {
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
         response.put("token", token);
+        response.put("userId", String.valueOf(user.getUserId()) );
 
         return ResponseEntity.ok(response);
     }

@@ -30,7 +30,8 @@ public class SecurityConfig {
             // Authorization rules
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                        "/loginpage/**",      // login APIs
+                        "/loginpage/send-otp",
+                        "/loginpage/verify-otp",// login APIs
                         "/registration/**"   // registration APIs
                         //"/otpapi/**"          // otp APIs
                 ).permitAll()

@@ -1,8 +1,10 @@
 package com.dms.dmsproject.service;
 
+import com.dms.dmsproject.model.UserRegistration;
+
 public interface OtpVerificationService {
 
-	public boolean verifyOtp(String email, String enteredOtp);
+	public UserRegistration verifyOtp(String email, String enteredOtp);
 	
 }
 
