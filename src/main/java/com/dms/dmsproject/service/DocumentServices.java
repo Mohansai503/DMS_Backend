@@ -21,6 +21,10 @@ import com.dms.dmsproject.model.UserRegistration;
 		//List<UploadResponse> list(int userId);
 
 		List<UploadResponse> getDocumentsByType(int userId, String type);
+
+		byte[] getDocumentFile(int docId);
+
+		UploadResponse getById(int docId);
 		
 		
 	

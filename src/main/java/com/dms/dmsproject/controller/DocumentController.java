@@ -89,7 +89,32 @@ import com.dms.dmsproject.service.DocumentServices;
 
 	        return ResponseEntity.ok(documents);
 	    }
+	    
+	    @GetMapping("/view/{docId}")
+	    public ResponseEntity<byte[]> viewDocument(@PathVariable int docId) {
 
+	        byte[] fileData = documentService.getDocumentFile(docId);
+
+	        UploadResponse doc = documentService.getById(docId); // create this method if needed
+
+	        return ResponseEntity.ok()
+	                .contentType(org.springframework.http.MediaType.parseMediaType(getFileType(doc.getDocName())))
+	                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
+	                        "inline; filename=\"" + doc.getDocName() + "\"")
+	                .body(fileData);
+	    }
+
+	    private String getFileType(String fileName) {
+
+	        if (fileName == null) return "application/octet-stream";
+
+	        if (fileName.endsWith(".png")) return "image/png";
+	        if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) return "image/jpeg";
+	        if (fileName.endsWith(".pdf")) return "application/pdf";
+	        if (fileName.endsWith(".txt")) return "text/plain";
+
+	        return "application/octet-stream";
+	    }
 	    
 	  //  @GetMapping("/search")
 	  //  public ResponseEntity<List<UploadResponse>> searchDocuments(@RequestParam String keyword) {
